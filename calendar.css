@@ -1,0 +1,181 @@
+/*
+Originally from http://www.atlantaballet.com/calendar/
+Highly modified for https://github.com/kmoser/KCalendar/
+*/
+
+div.calendar {
+	clear: both;
+	padding-bottom: 130px;
+}
+
+.calendar ul.month-browser li {
+	width: 33.3%;
+	padding: 0;
+	border: 0;
+	text-align: center;
+	text-transform: uppercase;
+	height: auto;
+	margin: 20px 0;
+	
+}
+.calendar {
+	width: 100%;
+	font-family: Arial, Verdana, Helvetica, sans-serif;
+}
+.calendar ul {
+	list-style: none;
+	padding: 0;
+	margin: 0;
+	clear: both;
+	width: 100%;
+}
+.calendar ul.weekdays {
+}
+.calendar ul.weekdays li {
+	text-align: center;
+	color: #666;
+	height: 30px;
+	font-weight: bold;
+	min-height: 30px;
+}
+
+.calendar li {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	-ms-box-sizing: border-box;
+	box-sizing: border-box;
+	width: 14.2857142857%;
+	padding: 5px;
+	display: block;
+	float: left;
+	border: 1px solid #ccc;
+	margin: 0px;
+	margin-right: -1px;
+	margin-bottom: -1px;
+	overflow-x: hidden;
+	overflow-y: auto;
+	min-height: 130px;
+	max-height: 130px;
+	line-height: 16px;
+	
+}
+.calendar .days: last-child li {
+	margin-bottom: 0px!important;
+	
+}
+.calendar li .day,.calendar li .month {
+	display: none;
+	
+}
+.calendar .date {
+	text-align: left;
+	margin-bottom: 5px;
+	color: #444444;
+	font-size: 16px;
+	font-weight: bold;
+}
+
+.calendar .x::before {
+	color: #ff0000;
+	xcontent: '\002717'; /* "X" */
+	content: '\002571';
+	font-size: 100px;
+	font-weight: lighter;
+	z-index: 2;
+	display: block;
+	position: relative;
+	top: 18px;
+	left: -7px;
+	opacity: 0.2;
+}
+
+/*
+.calendar .x2::before {
+	left: 4px;
+}
+*/
+
+.calendar li.out_of_range {
+	background-color: rgba( 0, 0, 0, 0.03 );
+	color: #666;
+	
+}
+
+.calendar li.today {
+	border: 3px solid #804444;
+	background-color: #ffffff;
+}
+
+div.calendar h1 {
+	clear: both;
+	text-align: center;
+	padding-top: 30px;
+}
+
+div.calendar h1:first-child {
+	padding-top: 0px;
+}
+
+@media only screen and (max-width: 1002px){
+	.calendar .x::before {
+		left: -10px;
+		top: 25px;
+	}
+
+	div.calendar li {
+		line-height: 20px;
+	}
+
+}
+
+@media only screen and (max-width: 767px){
+	.calendar ul.month-browser li {
+		font-size: 12px;
+	}
+	.calendar ul {
+		width: 100%;
+		box-sizing: border-box;
+	}
+	.calendar .weekdays {
+		display: none;
+	}
+	.calendar li {
+		display: block;
+		height: auto!important;
+		overflow-y: auto;
+		min-height: initial;
+		max-height: initial;
+		border: 1px solid #cccccc;
+		width: 100%;
+		box-sizing: border-box;
+		padding: 10px;
+		margin-bottom: -1px;
+	}
+	.calendar li .day,.calendar li .month {
+		display: inline;
+	}
+	.calendar .no-shows {
+		display: block;
+		color: #ccc;
+		text-align: center;
+	}
+	.calendar .date {
+		text-align: center;
+	}
+	.show-info .show-name {
+		font-size: 16px;
+		margin-bottom: 5px;
+	}
+	.show-info .venue,.show-info .show-time,.show-info: hover .venue,.show-info: hover .show-time {
+		display: inline;
+	}
+	.calendar li.out_of_range, .calendar li.past {
+		display: none;
+	}
+
+	div.calendar div.description {
+		text-align: center;
+	}
+
+}
+
