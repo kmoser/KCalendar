@@ -3,12 +3,15 @@ Originally from http://www.atlantaballet.com/calendar/
 Highly modified for https://github.com/kmoser/KCalendar/
 */
 
-div.calendar {
+div.kcalendar {
 	clear: both;
 	padding-bottom: 130px;
 }
 
-.calendar ul.month-browser li {
+.kcalendar div.event {
+	margin-bottom: 30px;
+}
+.kcalendar ul.month-browser li {
 	width: 33.3%;
 	padding: 0;
 	border: 0;
@@ -18,20 +21,18 @@ div.calendar {
 	margin: 20px 0;
 	
 }
-.calendar {
+.kcalendar {
 	width: 100%;
 	font-family: Arial, Verdana, Helvetica, sans-serif;
 }
-.calendar ul {
+.kcalendar ul {
 	list-style: none;
 	padding: 0;
 	margin: 0;
 	clear: both;
 	width: 100%;
 }
-.calendar ul.weekdays {
-}
-.calendar ul.weekdays li {
+.kcalendar ul.weekdays li {
 	text-align: center;
 	color: #666;
 	height: 30px;
@@ -39,7 +40,7 @@ div.calendar {
 	min-height: 30px;
 }
 
-.calendar li {
+.kcalendar li {
 	-webkit-box-sizing: border-box;
 	-moz-box-sizing: border-box;
 	-ms-box-sizing: border-box;
@@ -59,15 +60,15 @@ div.calendar {
 	line-height: 16px;
 	
 }
-.calendar .days: last-child li {
+.kcalendar .days: last-child li {
 	margin-bottom: 0px!important;
 	
 }
-.calendar li .day,.calendar li .month {
+.kcalendar li .day,.kcalendar li .month {
 	display: none;
 	
 }
-.calendar .date {
+.kcalendar .date {
 	text-align: left;
 	margin-bottom: 5px;
 	color: #444444;
@@ -75,7 +76,7 @@ div.calendar {
 	font-weight: bold;
 }
 
-.calendar .x::before {
+.kcalendar .x::before {
 	color: #ff0000;
 	xcontent: '\002717'; /* "X" */
 	content: '\002571';
@@ -90,56 +91,73 @@ div.calendar {
 }
 
 /*
-.calendar .x2::before {
+.kcalendar .x2::before {
 	left: 4px;
 }
 */
 
-.calendar li.out_of_range {
-	background-color: rgba( 0, 0, 0, 0.03 );
-	color: #666;
-	
+.kcalendar li.blank {
+	background-color: rgba( 0, 0, 0, 0.03 ) !important;
 }
 
-.calendar li.today {
+.kcalendar li.blank.past {
+	background: initial;
+}
+
+.kcalendar li.future {
+	background-color: rgba( 0, 255, 0, 0.03 );
+}
+
+.kcalendar li.free:after {
+	content: 'Nothing happening today';
+	color: #ff0000;
+}
+
+.kcalendar li.past {
+	/* https://codepen.io/tigt/post/optimizing-svgs-in-data-uris */
+	/* <svg version='1.1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink'><line x1='0' y1='100%' x2='100%' y2='0' style='stroke:rgba(255,0,0,0.3);stroke-width:2'/></svg> */
+	background: url( "data:image/svg+xml,%3Csvg%20version%3D%271.1%27%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20xmlns%3Axlink%3D%27http%3A%2F%2Fwww.w3.org%2F1999%2Fxlink%27%3E%3Cline%20x1%3D%270%27%20y1%3D%27100%25%27%20x2%3D%27100%25%27%20y2%3D%270%27%20style%3D%27stroke%3Argba(255%2C0%2C0%2C0.3)%3Bstroke-width%3A2%27%2F%3E%3C%2Fsvg%3E" );
+}
+
+.kcalendar li.today {
 	border: 3px solid #804444;
 	background-color: #ffffff;
 }
 
-div.calendar h1 {
+div.kcalendar h1 {
 	clear: both;
 	text-align: center;
 	padding-top: 30px;
 }
 
-div.calendar h1:first-child {
+div.kcalendar h1:first-child {
 	padding-top: 0px;
 }
 
 @media only screen and (max-width: 1002px){
-	.calendar .x::before {
+	.kcalendar .x::before {
 		left: -10px;
 		top: 25px;
 	}
 
-	div.calendar li {
+	div.kcalendar li {
 		line-height: 20px;
 	}
 
 }
 
 @media only screen and (max-width: 767px){
-	.calendar ul.month-browser li {
+	.kcalendar ul.month-browser li {
 		font-size: 12px;
 	}
-	.calendar ul {
+	.kcalendar ul {
 		width: 100%;
 		box-sizing: border-box;
 	}
-	.calendar .weekdays {
+	.kcalendar .weekdays {
 		display: none;
 	}
-	.calendar li {
+	.kcalendar li {
 		display: block;
 		height: auto!important;
 		overflow-y: auto;
@@ -151,29 +169,22 @@ div.calendar h1:first-child {
 		padding: 10px;
 		margin-bottom: -1px;
 	}
-	.calendar li .day,.calendar li .month {
+	.kcalendar li .day,.kcalendar li .month {
 		display: inline;
 	}
-	.calendar .no-shows {
+	.kcalendar .no-shows {
 		display: block;
 		color: #ccc;
 		text-align: center;
 	}
-	.calendar .date {
+	.kcalendar .date {
 		text-align: center;
 	}
-	.show-info .show-name {
-		font-size: 16px;
-		margin-bottom: 5px;
-	}
-	.show-info .venue,.show-info .show-time,.show-info: hover .venue,.show-info: hover .show-time {
-		display: inline;
-	}
-	.calendar li.out_of_range, .calendar li.past {
+	.kcalendar li.blank, .kcalendar li.past {
 		display: none;
 	}
 
-	div.calendar div.description {
+	div.kcalendar div.events {
 		text-align: center;
 	}
 
