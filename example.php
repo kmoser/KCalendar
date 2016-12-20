@@ -4,7 +4,7 @@
 	<meta charset="utf-8">
 	<title>KCalendar Example</title>
 	<meta name="description" content="Example of KCalendar usage" />
-	<meta name="author" content="Kim Moser" />
+	<meta name="author" content="Kim Moser, http://www.kmoser.com/" />
 
 	<style>
 	code {
@@ -56,12 +56,12 @@ $c = new KCalendar();
 $dt = new DateTime( 'today' ); // Change to whatever you want
 
 $events = array(
-	sprintf( '%04d%02d%02d', $dt->format( 'Y' ), $dt->format( 'n' ), $dt->format( 't' )-3 ) => 'Event 1 is <em>excellent</em>', // A day with a single event
-	sprintf( '%04d%02d%02d', $dt->format( 'Y' ), $dt->format( 'n' ), $dt->format( 't' )-2 ) => array(
+	sprintf( '%04d%02d%02d', $dt->format( 'Y' ), $dt->format( 'n' ), $dt->format( 't' )-2 ) => 'Event 1 is <em>excellent</em>', // A day with a single event
+	sprintf( '%04d%02d%02d', $dt->format( 'Y' ), $dt->format( 'n' ), $dt->format( 't' )-1 ) => array(
 		'Event 2 is <em>radical</em>',
 		'Event 3 is <em>wild</em>',
 	), // A day with two events
-	sprintf( '%04d%02d%02d', $dt->format( 'Y' ), $dt->format( 'n' ), $dt->format( 't' )-1 ) => array(
+	sprintf( '%04d%02d%02d', $dt->format( 'Y' ), $dt->format( 'n' ), $dt->format( 't' )-0 ) => array(
 		'Event 4 is <em>awesome</em>',
 		'Event 5 is <em>off the hook</em>',
 		'Event 6 is <em>da bomb</em>',

@@ -1,7 +1,11 @@
 KCalendar
 =========
 
-KCalendar is a PHP class which generates a responsive HTML/CSS calendar. It comes with a basic style sheet which you can change, or you can add an additional style sheet to override the defaults.
+12/20/2016 - v1.0
+
+---------------------
+
+**KCalendar** is a PHP class which generates a responsive HTML/CSS calendar. It comes with a basic style sheet which you can change, or you can add an additional style sheet to override the defaults.
 
 ###How do I use KCalendar?###
 
@@ -31,23 +35,32 @@ You will also need to include the style sheet:
 
 ###Advanced Options###
 
-When rendering a calendar, you can specify options in an array of key/value pairs:
+When rendering a calendar, you can specify options in an array of key/value pairs, e.g.:
 
 ```php
-$c->render( array( ... ) );
+$c->render(
+	array(
+		'num_months' => 3,
+		'header_format_current_year' => 'F, Y',
+	)
+);
 ```
 
 Valid options are:
 
- - **when**: *date*
-	Date to start rendering (only month and year are important; day, hours, minutes and seconds are ignored); must be either a PHP DateTime object, or a string recognizable by strtotime(); default=now
- - **num_months**: 1..n
+ - `when`=> *Date*
+	Date to start rendering (only month and year are important; day, hours, minutes and seconds are ignored); must be either a PHP `DateTime` object, or a string recognizable by `strtotime()`; default=now
+ - `num_months` => 1..n
 	How many months to output (default=1)
- - **header_format_current_year**: *string*
-	Format string which will be passed to date() for rendering header of months in the current year (default='F', meaning the full textual description of the current month, e.g. 'January'); if FALSE, header will not render at all
- - **header_format_current_year**: *string*
-	Format string which will be passed to date() for rendering header of months in a year **other than** the current year (default='F, Y', e.g. 'January, 2017'); if FALSE, header will not render at all
- - **events**: *array*
+ - `header_format_current_year` => *string*
+	Format string which will be passed to `date()` for rendering header of months in the current year (default='F', meaning the full textual description of the current month, e.g. 'January'); if FALSE, header will not render at all
+ - `header_format_current_year` => *string*
+	Format string which will be passed to `date()` for rendering header of months in a year **other than** the current year (default='F, Y', e.g. 'January, 2017'); if FALSE, header will not render at all
+ - `stylesheet` => TRUE or FALSE or *URL*
+	TRUE: generate default style sheet link: `<link rel="stylesheet" href="kcalendar.css" type="text/css" media="screen" />`
+	FALSE: no style sheet (default)
+	URL:  generate style sheet with the given URL, e.g.:  `<link rel="stylesheet" href="`**`URL`**`" type="text/css" media="screen" />`
+ - `events` => *array*
 	Keys must be in *YYYYMMDD* format and values must be strings (or an array of strings) describing that day's events (HTML OK), e.g.:
 
 	```php
@@ -63,7 +76,7 @@ Valid options are:
 
 ###Styling###
 
-The calendar cells are list items (&lt;li&gt;), with one or more class names describing what is in the cell:
+The calendar cells are generated as list items (`<li>`), with one or more class names describing what is in the cell:
 
 - **```today```**: this day
 - **```past```**: a day in the past
