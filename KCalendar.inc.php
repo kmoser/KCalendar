@@ -5,8 +5,15 @@ class KCalendar {
 
 	/*
 		params:
-			date => date to start rendering (only month and year are important; day, hours, minutes and seconds are ignored); either a DateTime object, or a string recognizable by strtotime(); default=now
+			when => date to start rendering (only month and year are important; day, hours, minutes and seconds are ignored); either a DateTime object, or a string recognizable by strtotime(); default=now
 			num_months => 1..n (how many months to output)
+			events => array of events: key=YYYYMMDD, value=string (or array of strings) describing that day's events (HTML OK), e.g.: array( '20161225' => 'Merry Christmas!', '20170101' => array( 'Happy New Year!', 'Public Domain Day' ))
+			'stylesheet' => url-of-style-sheet.css (or TRUE for kcalendar.css) // Render CSS tag: <link type="text/css" rel="stylesheet" href="url-of-style-sheet.css" />
+			header_format_current_year => Format to display header when rendering a month in the current year (default='F', i.e. full textual representation of a month, e.g. 'January')
+			header_format_other_year => Format to display header when rendering a month in a year other than the current year (default='F, Y', e.g. 'January, 2017')
+
+			For both header_format_???_year options: value should be either a format string which will get passed to date(), or FALSE (indicating no header should be displayed)
+			
 	*/
 	function render( $params = array() ) {
 		if (
@@ -24,11 +31,17 @@ class KCalendar {
 				$dt = new DateTime();
 			}
 		}
+
+		$header_format_current_year = array_key_exists( 'header_format_current_year', $params ) ? $params[ 'header_format_current_year' ] : 'F';
+		$header_format_other_year = array_key_exists( 'header_format_other_year', $params ) ? $params[ 'header_format_other_year' ] : 'F, Y';
+
+		if ( $params[ 'stylesheet' ] ) {
 ?>
-
-			<link rel="stylesheet" href="calendar.css" type="text/css" media="screen" />
-
-			<div class="calendar">
+			<link rel="stylesheet" href="<?= ( TRUE === $params[ 'stylesheet' ] ? 'kcalendar.css' : $params[ 'stylesheet' ] ) ?>" type="text/css" media="screen" />
+<?php
+		}
+?>
+			<div class="kcalendar">
 <?php
 				$num_months_to_show = ( array_key_exists( 'num_months', $params ) ? $params[ 'num_months' ] : self::NUM_MONTHS );
 
@@ -49,10 +62,26 @@ class KCalendar {
 						break;
 					}
 
+					$is_rendering_current_yea = ( $year == (int) date( 'Y' ) );
+
+					if (
+						FALSE
+							!==
+						(
+							$is_rendering_current_year
+								?
+							$header_format_current_year
+								:
+							$header_format_other_year
+						)
+					) {
 ?>
 				<h1>
-						<?= date( ( ( $year == (int) date( 'Y' ) ) ? 'F' : 'F, Y' ), $date_first_of_month ) ?>
+						<?= date( ( ( $year == (int) date( 'Y' ) ) ? $header_format_current_year : $header_format_other_year ), $date_first_of_month ) ?>
 				</h1>
+<?php
+					}
+?>
 
 				<ul class="weekdays">
 <?php
@@ -99,9 +128,7 @@ class KCalendar {
 							$date_current = mktime( 0, 0, 0, $month, $d, $year );
 							$timestamp_current = date( 'Ymd', $date_current );
 
-							$classes = array(
-								'calendar-day'
-							);
+							$classes = array();
 							
 							if (
 								$d // We've started to display this month
@@ -109,6 +136,14 @@ class KCalendar {
 								( $timestamp_current == date( 'Ymd' ) ) // We're on today's date
 							) {
 								$classes[] = 'today';
+							}
+
+							if ( $timestamp_current < date( 'Ymd' ) ) {
+								$classes[] = 'past';
+							}
+
+							if ( $timestamp_current > date( 'Ymd' ) ) {
+								$classes[] = 'future';
 							}
 
 							$contents = array(); // assume
@@ -133,36 +168,22 @@ class KCalendar {
 									}
 
 									foreach ( $values as $value ) {
-
-										if ( is_numeric( $value ) || is_bool( $value ) ) {
-											if ( $value ) {
-												$contents[] = $texts_yes[ $weekday ];
-											} else {
-												$contents[] = '<span class="no">' . $texts_no[ $weekday ] . '</span>';
-											}
-										} else {
-											$contents[] = "<strong>" . ( $value ) . "</strong>"; // E.g. "Happy Hallween!"
-										}
-
+										$contents[] = $value; // E.g. "Happy Halloween!"
 									}
-								} else {
-									$contents[] = $texts_yes[ $weekday ];
 								}
 
 								if ( sizeof( $contents ) ) {
-									$content = '<p>' . join( '</p><p>', $contents ) . '</p>';
+									$content = '<div class="event">' . join( '</div><div class="event">', $contents ) . '</div>';
+								} else {
+									$classes[] = 'free';
 								}
 							} else {
-								$classes[] = 'out_of_range';
-							}
-
-							if ( $timestamp_current < date( 'Ymd' ) ) {
-								$classes[] = 'past';
+								$classes[] = 'blank';
 							}
 
 ?>
 				    <li class="<?= join( ' ', $classes ) ?>">
-						<div class="date day_cell">
+						<div class="date">
 							<span class="day"><?= date( 'D', $date_current )?>,</span> <span class="month"><?= date( 'M', $date_current ) ?></span>
 <?php
 							if (
@@ -171,28 +192,14 @@ class KCalendar {
 								( date( 'n', $date_current ) == $month ) // We haven't gone to the next month
 							) {
 ?>
-	<?= $d ?>
-
-
-
-<?php
-								if ( $timestamp_current < date( 'Ymd' ) ) {
-?>
-	<span class="x<?= ( strlen( $d ) > 1 ) ? ' x2' : '' ?>"></span>
-<?php
-								}
-?>
-
-
-
-
+								<?= $d ?>
 <?php
 							}
 ?>
 
 						</div>
 
-						<div class="description">
+						<div class="events">
 							<?= $content ?>
 						</div>
 					</li>

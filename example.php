@@ -1,25 +1,27 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 	<meta charset="utf-8">
 	<title>KCalendar Example</title>
 	<meta name="description" content="Example of KCalendar usage" />
-	<meta name="author" content="Kim Moser" />
-	<link type="text/css" rel="stylesheet" href="stylesheet.css" />
+	<meta name="author" content="Kim Moser, http://www.kmoser.com/" />
+
+	<style>
+	code {
+		display: block;
+		background-color: #000000;
+		padding: 0px 10px 0px 10px;
+		color: #00ff00;
+		white-space: pre-wrap;
+	}
+	</style>
+
 </head>
 <body>
 
-<style>
-code {
-	display: block;
-	background-color: #000000;
-	padding: 0px 10px 0px 10px;
-	color: #00ff00;
-	white-space: pre-wrap;
-}
-</style>
-
 <h2>Simple Example</h2>
+
+<p>Resize your browser to see how the page looks with different screen sizes.</p>
 
 <?php
 	ob_start();
@@ -34,7 +36,7 @@ $c->render();
 
 ?>
 	<code>
-<?= $code ?>
+<?= htmlentities( $code ) ?>
 	</code>
 
 <?php
@@ -48,15 +50,22 @@ $c->render();
 	ob_start();
 ?>
 require_once 'KCalendar.inc.php';
+
 $c = new KCalendar();
 
 $dt = new DateTime( 'today' ); // Change to whatever you want
 
-// Keys are in YYYYMMDD format; values are either strings (HTML OK) or arrays of strings
 $events = array(
-	sprintf( '%04d%02d%02d', $dt->format( 'Y' ), $dt->format( 'n' ), $dt->format( 't' )-3 ) => 'Event 1 is <em>excellent</em>', // A day with a single event
-	sprintf( '%04d%02d%02d', $dt->format( 'Y' ), $dt->format( 'n' ), $dt->format( 't' )-2 ) => array( 'Event 2 is <em>radical</em>', 'Event 3 is <em>wild</em>' ), // A day with two events
-	sprintf( '%04d%02d%02d', $dt->format( 'Y' ), $dt->format( 'n' ), $dt->format( 't' )-1 ) => array( 'Event 4 is <em>awesome</em>', 'Event 5 is <em>off the hook</em>', 'Event 6 is <em>da bomb</em>' ), // A day with three events
+	sprintf( '%04d%02d%02d', $dt->format( 'Y' ), $dt->format( 'n' ), $dt->format( 't' )-2 ) => 'Event 1 is <em>excellent</em>', // A day with a single event
+	sprintf( '%04d%02d%02d', $dt->format( 'Y' ), $dt->format( 'n' ), $dt->format( 't' )-1 ) => array(
+		'Event 2 is <em>radical</em>',
+		'Event 3 is <em>wild</em>',
+	), // A day with two events
+	sprintf( '%04d%02d%02d', $dt->format( 'Y' ), $dt->format( 'n' ), $dt->format( 't' )-0 ) => array(
+		'Event 4 is <em>awesome</em>',
+		'Event 5 is <em>off the hook</em>',
+		'Event 6 is <em>da bomb</em>',
+	), // A day with three events
 
 	/* Usually you will just do something like this:
 		'20161218' => 'This is an event',
@@ -70,6 +79,7 @@ $c->render(
 		'when' => $dt,
 		'events' => $events,
 		'num_months' => 4,
+		'stylesheet' => TRUE,
 	)
 );
 
@@ -78,7 +88,7 @@ $c->render(
 
 ?>
 	<code>
-<?= $code ?>
+<?= htmlentities( $code ) ?>
 	</code>
 
 <?php
