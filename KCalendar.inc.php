@@ -6,6 +6,7 @@ class KCalendar {
 	/*
 		params:
 			when => date to start rendering (only month and year are important; day, hours, minutes and seconds are ignored); either a DateTime object, or a string recognizable by strtotime(); default=now
+			now => current date; either a DateTime object, or a string recognizable by strtotime(); default=now
 			num_months => 1..n (how many months to output)
 			events => array of events: key=YYYYMMDD, value=string (or array of strings) describing that day's events (HTML OK), e.g.: array( '20161225' => 'Merry Christmas!', '20170101' => array( 'Happy New Year!', 'Public Domain Day' ))
 			'stylesheet' => url-of-style-sheet.css (or TRUE for kcalendar.css) // Render CSS tag: <link type="text/css" rel="stylesheet" href="url-of-style-sheet.css" />
@@ -16,19 +17,37 @@ class KCalendar {
 			
 	*/
 	function render( $params = array() ) {
+		// Determine $dt_start, i.e. the date to start rendering (assumed to be the first day of that month):
 		if (
 			array_key_exists( 'when', $params )
 				&&
 			is_a( $params[ 'when' ], 'DateTime' )
 		) {
-			$dt = $params[ 'when' ];
+			$dt_start = $params[ 'when' ];
 		} else {
 			try {
-				$dt = new DateTime(
+				$dt_start = new DateTime(
 					array_key_exists( 'when', $params ) ? $params[ 'when' ] : 'now'
 				);
 			} catch ( Exception $e ) {
-				$dt = new DateTime();
+				$dt_start = new DateTime();
+			}
+		}
+
+		// Determine $dt_now, i.e. today's date (so we know which cell to give a class name of "today", "past", or "future"):
+		if (
+			array_key_exists( 'now', $params )
+				&&
+			is_a( $params[ 'now' ], 'DateTime' )
+		) {
+			$dt_now = $params[ 'now' ];
+		} else {
+			try {
+				$dt_now = new DateTime(
+					array_key_exists( 'now', $params ) ? $params[ 'now' ] : 'now'
+				);
+			} catch ( Exception $e ) {
+				$dt_now = new DateTime();
 			}
 		}
 
@@ -46,8 +65,8 @@ class KCalendar {
 				$num_months_to_show = ( array_key_exists( 'num_months', $params ) ? $params[ 'num_months' ] : self::NUM_MONTHS );
 
 				for ( $month_i = 0; $month_i <= $num_months_to_show; $month_i++ ) {
-					$month = $month_i + $dt->format( 'n' );
-					$year = $dt->format( 'Y' );
+					$month = $month_i + $dt_start->format( 'n' );
+					$year = $dt_start->format( 'Y' );
 					if ( $month > 12 ) {
 						$month -= 12;
 						$year++;
@@ -62,7 +81,7 @@ class KCalendar {
 						break;
 					}
 
-					$is_rendering_current_yea = ( $year == (int) date( 'Y' ) );
+					$is_rendering_current_year = ( $year == $dt_now->format( 'Y' ) );
 
 					if (
 						FALSE
@@ -77,7 +96,7 @@ class KCalendar {
 					) {
 ?>
 				<h1>
-						<?= date( ( ( $year == (int) date( 'Y' ) ) ? $header_format_current_year : $header_format_other_year ), $date_first_of_month ) ?>
+						<?= date( ( ( $year == $dt_now->format( 'Y' ) ) ? $header_format_current_year : $header_format_other_year ), $date_first_of_month ) ?>
 				</h1>
 <?php
 					}
@@ -133,16 +152,16 @@ class KCalendar {
 							if (
 								$d // We've started to display this month
 									&&
-								( $timestamp_current == date( 'Ymd' ) ) // We're on today's date
+								( $timestamp_current == $dt_now->format( 'Ymd' ) ) // We're on today's date
 							) {
 								$classes[] = 'today';
 							}
 
-							if ( $timestamp_current < date( 'Ymd' ) ) {
+							if ( $timestamp_current < $dt_now->format( 'Ymd' ) ) {
 								$classes[] = 'past';
 							}
 
-							if ( $timestamp_current > date( 'Ymd' ) ) {
+							if ( $timestamp_current > $dt_now->format( 'Ymd' ) ) {
 								$classes[] = 'future';
 							}
 
@@ -181,20 +200,30 @@ class KCalendar {
 								$classes[] = 'blank';
 							}
 
+							$cell = NULL; // assume
+							if ( $params[ 'cell_callback' ] ) {
+								$cell = $params[ 'cell_callback' ](
+									array(
+										'date_current' => $date_current,
+									)
+								);
+							}
+							
+							if ( NULL === $cell ) {
 ?>
 				    <li class="<?= join( ' ', $classes ) ?>">
 						<div class="date">
 							<span class="day"><?= date( 'D', $date_current )?>,</span> <span class="month"><?= date( 'M', $date_current ) ?></span>
 <?php
-							if (
-								$d // We've started to display this month
-									&&
-								( date( 'n', $date_current ) == $month ) // We haven't gone to the next month
-							) {
+								if (
+									$d // We've started to display this month
+										&&
+									( date( 'n', $date_current ) == $month ) // We haven't gone to the next month
+								) {
 ?>
-								<?= $d ?>
+									<?= $d ?>
 <?php
-							}
+								}
 ?>
 
 						</div>
@@ -204,16 +233,21 @@ class KCalendar {
 						</div>
 					</li>
 <?php
+							} else if ( FALSE === $cell) {
+								break;
+							} else {
+								echo $cell;
+							}
 						}
 ?>
 				</ul>
 <?php
 
-					} while( $month == date( 'n', $date_current + 60*60*24 ) );
+					} while ( $month == date( 'n', $date_current + 60*60*24 ) );
 
 				}
 ?>
-			</div>
+			</div><!--class="kcalendar"-->
 
 <?php
 	}

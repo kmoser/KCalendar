@@ -61,7 +61,7 @@ div.kcalendar {
 	
 }
 .kcalendar .days: last-child li {
-	margin-bottom: 0px!important;
+	margin-bottom: 0px;
 	
 }
 .kcalendar li .day,.kcalendar li .month {
@@ -161,7 +161,7 @@ div.kcalendar h1:first-child {
 	}
 	.kcalendar li {
 		display: block;
-		height: auto!important;
+		height: auto;
 		overflow-y: auto;
 		min-height: initial;
 		max-height: initial;
