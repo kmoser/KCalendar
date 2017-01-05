@@ -98,7 +98,9 @@ You can either edit the default style sheet (```kcalendar.css```), add your own 
 
 Features I plan to add:
 
-- Ability specify callback function to execute when rendering a calendar cell, to allow certain cells to be rendered in a custom manner
+- Ability to specify a callback function to render the calendar header
+- Ability to specify a callback function to render the weekday column headers (Sun-Sat)
+- Ability to have the week start on any day (not just Sunday)
 
 ###Comments? Feedback?###
 
