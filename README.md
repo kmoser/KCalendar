@@ -1,11 +1,15 @@
 KCalendar
 =========
 
-1/5/2017 - v1.1
+1/6/2017 - v1.1b
 
 ---------------------
 
 **KCalendar** is a PHP class which generates a responsive HTML/CSS calendar. It comes with a basic style sheet which you can change, or you can add an additional style sheet to override the defaults.
+
+###What does it look like?###
+
+See http://www.kmoser.com/kcalendar/ for an example of a functional KCalendar script.
 
 ###How do I use KCalendar?###
 
@@ -106,5 +110,3 @@ Features I plan to add:
 
 - Submit your pull requests on this project's [GitHub page](https://github.com/kmoser/KCalendar/)
 - Contact me on GitHub or by email; see my [website](http://www.kmoser.com/) for contact info
-
-
