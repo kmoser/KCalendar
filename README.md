@@ -70,7 +70,9 @@ Valid options are:
  - `stylesheet` => TRUE or FALSE or *URL*
 
 	TRUE: generate default style sheet link: `<link rel="stylesheet" href="kcalendar.css" type="text/css" media="screen" />`
+
 	FALSE: no style sheet (default)
+
 	URL:  generate style sheet with the given URL, e.g.:  `<link rel="stylesheet" href="`**`URL`**`" type="text/css" media="screen" />`
  - `events` => *array*
 
