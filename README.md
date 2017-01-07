@@ -53,20 +53,27 @@ $c->render(
 Valid options are:
 
  - `when`=> *Date*
+
 	Date to start rendering (only month and year are important; day, hours, minutes and seconds are ignored); must be either a PHP `DateTime` object, or a string recognizable by `strtotime()`; default=now
  - `now`=> *Date*
+
 	Today's date; must be either a PHP `DateTime` object or a string recognizable by `strtotime()`; default=now
  - `num_months` => 1..n
+
 	How many months to output; default=1
  - `header_format_current_year` => *string*
+
 	Format string which will be passed to `date()` for rendering header of months in the current year; if FALSE, header will not render at all; default='F', meaning the full textual description of the current month, e.g. 'January'
  - `header_format_other_year` => *string*
+
 	Format string which will be passed to `date()` for rendering header of months in a year **other than** the current year; if FALSE, header will not render at all; default='F, Y', e.g. 'January, 2017'
  - `stylesheet` => TRUE or FALSE or *URL*
+
 	TRUE: generate default style sheet link: `<link rel="stylesheet" href="kcalendar.css" type="text/css" media="screen" />`
 	FALSE: no style sheet (default)
 	URL:  generate style sheet with the given URL, e.g.:  `<link rel="stylesheet" href="`**`URL`**`" type="text/css" media="screen" />`
  - `events` => *array*
+
 	Keys must be in *YYYYMMDD* format and values must be strings (or an array of strings) describing that day's events (HTML OK), e.g.:
 
 	```php
@@ -80,6 +87,7 @@ Valid options are:
 	)
 	```
  - `cell_callback` => *function*
+
 	Function must accept an array of parameters. Parameters passed in:
 		`date_current` => Unix timestamp containing the date of the current cell being rendered.
 	Function must return a chunk of HTML (presumably `<li>...</li>`) which will be rendered for that cell, or NULL indicating the default cell should be rendered normally
