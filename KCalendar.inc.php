@@ -51,6 +51,8 @@ class KCalendar {
 			}
 		}
 
+		$dt_index = new DateTime();
+
 		$header_format_current_year = array_key_exists( 'header_format_current_year', $params ) ? $params[ 'header_format_current_year' ] : 'F';
 		$header_format_other_year = array_key_exists( 'header_format_other_year', $params ) ? $params[ 'header_format_other_year' ] : 'F, Y';
 
@@ -64,39 +66,31 @@ class KCalendar {
 <?php
 				$num_months_to_show = ( array_key_exists( 'num_months', $params ) ? $params[ 'num_months' ] : self::NUM_MONTHS );
 
-				for ( $month_i = 0; $month_i <= $num_months_to_show; $month_i++ ) {
-					$month = $month_i + $dt_start->format( 'n' );
-					$year = $dt_start->format( 'Y' );
-					if ( $month > 12 ) {
-						$month -= 12;
-						$year++;
-					}
+				for ( $month_i = 0; $month_i < $num_months_to_show; $month_i++ ) {
+					$dt_index->setDate( $dt_start->format( 'Y' ), $dt_start->format( 'n' ), 1 ); // 1st of the month
+					$dt_index->add( new DateInterval( 'P' . $month_i . 'M' ) ); // Jump to the month we are up to
 
-					$date_first_of_month = mktime( 0, 0, 0, $month, 1, $year );
+					$dt_month = clone $dt_index; // So we know what month we are up to
 
 					// Determine weekday of first day of month:
-					$weekday_first = date( 'w', $date_first_of_month );
-
-					if ( $num_months_to_show == $month_i ) {
-						break;
-					}
-
-					$is_rendering_current_year = ( $year == $dt_now->format( 'Y' ) );
+					$weekday_first = $dt_index->format( 'w' );
 
 					if (
 						FALSE
 							!==
 						(
-							$is_rendering_current_year
-								?
-							$header_format_current_year
-								:
-							$header_format_other_year
+							$header_format = ( // Yes, assign!
+								( $dt_index->format( 'Y' ) == $dt_now->format( 'Y' ) ) // If we are rendering the current year
+									?
+								$header_format_current_year
+									:
+								$header_format_other_year
+							)
 						)
 					) {
 ?>
 				<h1>
-						<?= date( ( ( $year == $dt_now->format( 'Y' ) ) ? $header_format_current_year : $header_format_other_year ), $date_first_of_month ) ?>
+						<?= $dt_index->format( $header_format ) ?>
 				</h1>
 <?php
 					}
@@ -125,43 +119,46 @@ class KCalendar {
 				</ul>
 <?php
 
-					// As long as we're in the current month:
-					$d = 0; // Day
+					$d = 0; // What day of the month we are generating (0=we are before the beginning of the month, or after the end of the month)
+					$is_still_in_current_month = FALSE; // assume
 					do {
 ?>
 				<ul class="days">
 <?php
 						for ( $i=0; $i < 7; $i++ ) {
 							if (
-								0 == $d // Haven't hit the first day yet
+								0 == $d // Haven't hit the first day of the month yet...
 							) {
 								if (
-									$i == $weekday_first // We're up to the weekday that is the first of the month
+									$i == $dt_index->format( 'w' ) // But we're up to the weekday that is the first of the month...
 								) {
-									$d = 1; // We're on day 1 of the month!
+									$d = 1; // ...so that means we're on day 1 of the month!
+									$is_still_in_current_month = TRUE;
 								}
 							} else {
-								$d++;
+								$d++; // We are in the month, so jump to the next day:
+								$dt_index->setDate( $dt_index->format( 'Y' ), $dt_index->format( 'n' ), $d );
+
+								$is_still_in_current_month = (
+									$dt_index->format( 'm' ) == $dt_month->format( 'm' )
+								);
 							}
 
-							$date_current = mktime( 0, 0, 0, $month, $d, $year );
-							$timestamp_current = date( 'Ymd', $date_current );
-
+							// Determine what class(es) apply to this cell:
 							$classes = array();
-							
 							if (
 								$d // We've started to display this month
 									&&
-								( $timestamp_current == $dt_now->format( 'Ymd' ) ) // We're on today's date
+								( $dt_index->format( 'Ymd' ) == $dt_now->format( 'Ymd' ) ) // We're on today's date
 							) {
 								$classes[] = 'today';
 							}
 
-							if ( $timestamp_current < $dt_now->format( 'Ymd' ) ) {
+							if ( $dt_index < $dt_now ) {
 								$classes[] = 'past';
 							}
 
-							if ( $timestamp_current > $dt_now->format( 'Ymd' ) ) {
+							if ( $dt_index > $dt_now ) {
 								$classes[] = 'future';
 							}
 
@@ -171,16 +168,14 @@ class KCalendar {
 							if (
 								$d // We've started to display this month
 									&&
-								( date( 'n', $date_current ) == $month ) // We haven't gone to the next month
+								$is_still_in_current_month
 							) {
-								$weekday = date( 'w', $date_current );
-
 								if (
 									is_array( $params[ 'events' ] )
 										&&
-									array_key_exists( $timestamp_current, $params[ 'events' ] )
+									array_key_exists( $dt_index->format( 'Ymd' ), $params[ 'events' ] )
 								) {
-									$values = $params[ 'events' ][ $timestamp_current ];
+									$values = $params[ 'events' ][ $dt_index->format( 'Ymd' ) ];
 
 									if ( ! is_array( $values ) ) {
 										$values = array( $values );
@@ -213,12 +208,12 @@ class KCalendar {
 ?>
 				    <li class="<?= join( ' ', $classes ) ?>">
 						<div class="date">
-							<span class="day"><?= date( 'D', $date_current )?>,</span> <span class="month"><?= date( 'M', $date_current ) ?></span>
+							<span class="day"><?= $dt_index->format( 'D' ) ?>,</span> <span class="month"><?= $dt_index->format( 'M' ) ?></span>
 <?php
 								if (
 									$d // We've started to display this month
 										&&
-									( date( 'n', $date_current ) == $month ) // We haven't gone to the next month
+									$is_still_in_current_month
 								) {
 ?>
 									<?= $d ?>
@@ -242,10 +237,11 @@ class KCalendar {
 ?>
 				</ul>
 <?php
+					} while (
+						$is_still_in_current_month
+					);
 
-					} while ( $month == date( 'n', $date_current + 60*60*24 ) );
-
-				}
+				} // For each month
 ?>
 			</div><!--class="kcalendar"-->
 
