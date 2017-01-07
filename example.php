@@ -21,7 +21,7 @@
 
 <p>KCalendar is a PHP class which generates a responsive HTML/CSS calendar. It comes with a basic style sheet which you can change, or you can add an additional style sheet to override the defaults.</p>
 
-<a href="https://github.com/kmoser/KCalendar">View this project on GitHub</a></p>
+<p><a href="https://github.com/kmoser/KCalendar">View this project on GitHub</a></p>
 
 <hr />
 
@@ -35,7 +35,7 @@
 
 <p>Resize your browser to see how the page looks with different screen sizes.</p>
 
-<a name="simple"></a>
+<a id="simple"></a>
 
 <h2>Simple Example</h2>
 
@@ -60,7 +60,7 @@ $c->render();
 	eval( $code );
 ?>
 
-<a name="complex"></a>
+<a id="complex"></a>
 
 <h2>Complex Example</h2>
 
