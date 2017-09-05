@@ -75,24 +75,34 @@ class KCalendar {
 					// Determine weekday of first day of month:
 					$weekday_first = $dt_index->format( 'w' );
 
-					if (
-						FALSE
-							!==
-						(
-							$header_format = ( // Yes, assign!
-								( $dt_index->format( 'Y' ) == $dt_now->format( 'Y' ) ) // If we are rendering the current year
-									?
-								$header_format_current_year
-									:
-								$header_format_other_year
+					if ( $params[ 'header_callback' ] ) {
+						echo $params[ 'header_callback' ](
+							array(
+								'dt_index' => $dt_index,
+								'dt_now' => $dt_now,
 							)
-						)
-					) {
+						);
+					} else {
+
+						if (
+							FALSE
+								!==
+							(
+								$header_format = ( // Yes, assign!
+									( $dt_index->format( 'Y' ) == $dt_now->format( 'Y' ) ) // If we are rendering the current year
+										?
+									$header_format_current_year
+										:
+									$header_format_other_year
+								)
+							)
+						) {
 ?>
 				<h1>
 						<?= $dt_index->format( $header_format ) ?>
 				</h1>
 <?php
+						}
 					}
 ?>
 
@@ -237,6 +247,12 @@ class KCalendar {
 ?>
 				</ul>
 <?php
+						$dt_index->setDate( $dt_index->format( 'Y' ), $dt_index->format( 'n' ), 1 + $d );
+
+						$is_still_in_current_month = (
+							$dt_index->format( 'm' ) == $dt_month->format( 'm' )
+						);
+
 					} while (
 						$is_still_in_current_month
 					);

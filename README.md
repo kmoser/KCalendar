@@ -1,17 +1,17 @@
 KCalendar
 =========
 
-1/6/2017 - v1.1b
+9/5/2017 - v1.2
 
 ---------------------
 
 **KCalendar** is a PHP class which generates a responsive HTML/CSS calendar. It comes with a basic style sheet which you can change, or you can add an additional style sheet to override the defaults.
 
-###What does it look like?###
+### What does it look like? ### 
 
 See http://www.kmoser.com/kcalendar/ for an example of a functional KCalendar script.
 
-###How do I use KCalendar?###
+### How do I use KCalendar? ### 
 
 1. Include the KCalendar.inc.php file:
 
@@ -37,7 +37,7 @@ You will also need to include the style sheet:
 <link type="text/css" rel="stylesheet" href="kcalendar.css" />
 ```
 
-###Advanced Options###
+### Advanced Options ### 
 
 When rendering a calendar, you can specify options in an array of key/value pairs, e.g.:
 
@@ -73,7 +73,7 @@ Valid options are:
 
 	FALSE: no style sheet (default)
 
-	URL:  generate style sheet with the given URL, e.g.:  `<link rel="stylesheet" href="`**`URL`**`" type="text/css" media="screen" />`
+	URL:  generate style sheet with the given URL, e.g.:  `<link rel="stylesheet" href="*URL*" type="text/css" media="screen" />`
  - `events` => *array*
 
 	Keys must be in *YYYYMMDD* format and values must be strings (or an array of strings) describing that day's events (HTML OK), e.g.:
@@ -94,7 +94,15 @@ Valid options are:
 		`date_current` => Unix timestamp containing the date of the current cell being rendered.
 	Function must return a chunk of HTML (presumably `<li>...</li>`) which will be rendered for that cell, or NULL indicating the default cell should be rendered normally
 
-###Styling###
+ - `header_callback` => *function*
+
+	Function must accept an array of parameters. Parameters passed in:
+		`dt_index` => PHP DateTime object set to the first day of the current month being rendered.
+		`dt_now` => PHP DateTime object set the date to begin rendering.
+	By comparing `dt_index` with `dt_now`, the callback function can determine whether it is rendering the current month, a previous month, or the next month.
+	Whatever the callback function returns (presumably a string of text/HTML) will be rendered just before the beginning of the month.
+
+### Styling ### 
 
 The calendar cells are generated as list items (`<li>`), with one or more class names describing what is in the cell:
 
@@ -108,15 +116,18 @@ For example, ```<li class="future free">``` indicates a cell that lies in the fu
 
 You can either edit the default style sheet (```kcalendar.css```), add your own style sheet to override the defaults, or use only your own style sheet to define all the styles.
 
-###To Do###
+### To Do ### 
 
 Features I plan to add:
 
-- Ability to specify a callback function to render the calendar header
 - Ability to specify a callback function to render the weekday column headers (Sun-Sat)
 - Ability to have the week start on any day (not just Sunday)
 
-###Comments? Feedback?###
+### Done ### 
+
+- 9/5/2017: Ability to specify a callback function to render the calendar header
+
+### Comments? Feedback? ### 
 
 - Submit your pull requests on this project's [GitHub page](https://github.com/kmoser/KCalendar/)
 - Contact me on GitHub or by email; see my [website](http://www.kmoser.com/) for contact info
